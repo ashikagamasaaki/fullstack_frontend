@@ -1,4 +1,44 @@
-export default function Page() {
+'use client'
+
+import { useState, useEffect } from 'react';
+import productsData from "../sample/dummy_products.json";
+import inventoriesData from "../sample/dummy_inventories.json";
+
+type ProductData = {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+};
+
+type InventoryData = {
+    id: number;
+    type: string;
+    date: string;
+    unit: number;
+    quantity: number;
+    price: number;
+    inventory: number;
+};
+
+export default function Page({params} : {
+    params: {id: number},
+}) {
+    const [product, setProduct] = useState<ProductData>
+    ({id: 0, name: "", price: 0, description: ""});
+    const [data, setData] = useState<Array<InventoryData>>([]);
+
+    useEffect(() => {
+        const selectedProduct: ProductData = productsData.find
+        (v => v.id == params.id) ?? {
+            id: 0,
+            name: "",
+            price: 0,
+            description: "",
+        };
+        setProduct(selectedProduct);
+        setData(inventoriesData);
+    }, [])
     return(
         <>
             <h2>商品在庫一覧</h2>
@@ -6,7 +46,7 @@ export default function Page() {
             <form>
                 <div>
                     <label>商品名：</label>
-                    <span>コットン100%バックリボンティアードワンピース（黒）</span>
+                    <span>{product.name}</span>
                 </div>
                 <div>
                     <label>数量：</label>
@@ -28,41 +68,18 @@ export default function Page() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>卸し</td>
-                        <td>2023-04-03 18:54:13</td>
-                        <td>6900</td>
-                        <td>2</td>
-                        <td>13800</td>
-                        <td>390</td>
-                    </tr>
-                    <tr>
-                        <td>仕入れ</td>
-                        <td>2023-04-03 18:54:13</td>
-                        <td>6900</td>
-                        <td>2</td>
-                        <td>13800</td>
-                        <td>390</td>
-                    </tr>
-                    <tr>
-                        <td>卸し</td>
-                        <td>2023-04-03 18:54:13</td>
-                        <td>6900</td>
-                        <td>2</td>
-                        <td>13800</td>
-                        <td>390</td>
-                    </tr>
-                    <tr>
-                        <td>仕入れ</td>
-                        <td>2023-04-03 18:54:13</td>
-                        <td>6900</td>
-                        <td>2</td>
-                        <td>13800</td>
-                        <td>390</td>
-                    </tr>
+                    {data.map((data: InventoryData) => (
+                        <tr key={data.id}>
+                            <td>{data.type}</td>
+                            <td>{data.date}</td>
+                            <td>{data.unit}</td>
+                            <td>{data.quantity}</td>
+                            <td>{data.price}</td>
+                            <td>{data.inventory}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-            <p>商品在庫の一覧を表示する</p>
         </>
     )
 }
